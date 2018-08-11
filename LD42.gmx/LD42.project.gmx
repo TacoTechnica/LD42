@@ -5,9 +5,55 @@
   </Configs>
   <NewExtensions/>
   <sounds name="sound"/>
-  <sprites name="sprites"/>
+  <sprites name="sprites">
+    <sprite>sprites\sprShip</sprite>
+    <sprite>sprites\sprShipDead</sprite>
+    <sprite>sprites\sprShipFlip</sprite>
+    <sprite>sprites\sprAsteroid</sprite>
+    <sprite>sprites\sprStars</sprite>
+    <sprite>sprites\sprBullet</sprite>
+    <sprite>sprites\sprBulletTrail</sprite>
+    <sprites name="ui">
+      <sprite>sprites\sprUIHealthBar</sprite>
+      <sprite>sprites\sprUIOverHeating</sprite>
+    </sprites>
+  </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
+  <scripts name="scripts">
+    <scripts name="gamestate">
+      <script>scripts\game_get_dtime.gml</script>
+      <script>scripts\game_set_dtime.gml</script>
+    </scripts>
+    <scripts name="camera">
+      <script>scripts\camera_follow.gml</script>
+      <script>scripts\camera_follow_ship.gml</script>
+      <script>scripts\camera_apply_shake.gml</script>
+    </scripts>
+    <scripts name="math">
+      <script>scripts\random_with_seed.gml</script>
+    </scripts>
+    <scripts name="misc">
+      <script>scripts\star_renderer_render_chunk.gml</script>
+      <script>scripts\bullet_poof.gml</script>
+    </scripts>
+    <scripts name="ship">
+      <script>scripts\ship_fire_bullet.gml</script>
+    </scripts>
+  </scripts>
+  <objects name="objects">
+    <object>objects\Gamestate</object>
+    <object>objects\objAsteroidThrower</object>
+    <object>objects\objStarRenderer</object>
+    <object>objects\objShip</object>
+    <object>objects\objAsteroid</object>
+    <object>objects\objBullet</object>
+    <object>objects\objShipDead</object>
+  </objects>
+  <rooms name="rooms">
+    <room>rooms\roomSTART</room>
+    <room>rooms\roomBASE</room>
+  </rooms>
   <help>
     <rtf>help.rtf</rtf>
   </help>

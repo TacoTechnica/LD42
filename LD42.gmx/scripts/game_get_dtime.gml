@@ -1,0 +1,1 @@
+return Gamestate._dtime;
