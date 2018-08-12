@@ -2,13 +2,255 @@
 <object>
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
-  <visible>0</visible>
-  <depth>0</depth>
+  <visible>-1</visible>
+  <depth>10000</depth>
   <persistent>-1</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
     <event eventtype="0" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Randomize
+randomize();
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Static particle systems
+
+_mainPartSystem = part_system_create();
+part_system_depth(_mainPartSystem, 1);
+
+// BULLET
+_bulletPartType = part_type_create();
+part_type_sprite(_bulletPartType, sprBulletTrail, false, false, false);
+part_type_alpha2(_bulletPartType, 0.9, 0);
+part_type_life(_bulletPartType, 30, 40);
+part_type_blend(_bulletPartType, bm_add);
+
+// ASTEROID
+_asteroidBoomPartType1 = part_type_create();
+part_type_sprite(_asteroidBoomPartType1, sprAsteroid, false, true, true);
+part_type_alpha2(_asteroidBoomPartType1, 0.9, 0.1);
+part_type_scale(_asteroidBoomPartType1,0.2, 0.2);
+part_type_life(_asteroidBoomPartType1, 60, 120);
+part_type_speed(_asteroidBoomPartType1, 2, 5, -0.01, false);
+part_type_direction(_asteroidBoomPartType1, 0, 360, 0, 0.001);
+_asteroidBoomPartType2 = part_type_create();
+part_type_shape(_asteroidBoomPartType2, pt_shape_explosion);
+part_type_colour3(_asteroidBoomPartType2, $112ff4, $11f4f4, $6b9b9b);
+part_type_alpha2(_asteroidBoomPartType2, 0.9, 0.1);
+part_type_scale(_asteroidBoomPartType2,0.6, 0.6);
+part_type_life(_asteroidBoomPartType2, 30, 60);
+part_type_orientation(_asteroidBoomPartType2, 0, 360, 1, 1, false);
+part_type_blend(_asteroidBoomPartType2, bm_add);
+part_type_size(_asteroidBoomPartType2, 0.8, 1.2, -0.01, 0);
+//part_type_blend(_bulletPartType, bm_normal);
+
+// Asteroid atmosphere burn
+_asteroidBurnPartType = part_type_create();
+part_type_shape(_asteroidBurnPartType, pt_shape_smoke);
+part_type_colour3(_asteroidBurnPartType, $112ff4, $11f4f4, $6b9b9b);
+part_type_alpha3(_asteroidBurnPartType, 0.4, 0.9, 0.1);
+part_type_scale(_asteroidBurnPartType,0.7, 0.7);
+part_type_life(_asteroidBurnPartType, 40, 70);
+part_type_orientation(_asteroidBurnPartType, 0, 360, 4, 1, false);
+part_type_blend(_asteroidBurnPartType, bm_add);
+part_type_speed(_asteroidBurnPartType, 2, 3, -0.01, false);
+part_type_direction(_asteroidBurnPartType, 0, 360, 0, 0.001);
+//part_type_size(_asteroidBurnPartType, 0.8, 1.2, 0.05, 0.1);
+
+
+// SHIP EXPLODY
+_shipBoomPartType = part_type_create();
+part_type_shape(_shipBoomPartType, pt_shape_explosion);
+part_type_colour3(_shipBoomPartType, $a11ff4, $11f4f4, $6b9b9b);
+part_type_alpha2(_shipBoomPartType, 1, 0.1);
+part_type_scale(_shipBoomPartType,0.6, 0.6);
+part_type_life(_shipBoomPartType, 60, 90);
+part_type_orientation(_shipBoomPartType, 0, 360, 1, 1, false);
+part_type_blend(_shipBoomPartType, bm_add);
+part_type_size(_shipBoomPartType, 0.2, 2.2, 0.05, 0.01);
+part_type_speed(_shipBoomPartType, 2, 3, -0.01, false);
+part_type_direction(_shipBoomPartType, 0, 360, 0, 0.001);
+
+
+
+// BOSS LAZER
+_laserPartType = part_type_create();
+part_type_sprite(_laserPartType, sprBossLaser, false, false, false);
+part_type_alpha3(_laserPartType, 0.4, 1.0, 0);
+part_type_colour3(_laserPartType, $91f2ff, $0000ff, $005bc0);
+part_type_life(_laserPartType, 120, 124);
+part_type_blend(_laserPartType, bm_add);
+
+// BOSS DEATH
+_bossDeathPartType = part_type_create();
+part_type_shape(_bossDeathPartType, pt_shape_explosion);
+part_type_colour3(_bossDeathPartType, $a11ff4, $11f4f4, $6b9b9b);
+part_type_alpha2(_bossDeathPartType, 1, 0.1);
+part_type_scale(_bossDeathPartType,0.6, 0.6);
+part_type_life(_bossDeathPartType, 90, 120);
+part_type_orientation(_bossDeathPartType, 0, 360, 1, 1, false);
+part_type_blend(_bossDeathPartType, bm_add);
+part_type_size(_bossDeathPartType, 0.2, 2.2, 0.05, 0.01);
+part_type_speed(_bossDeathPartType, 4, 5, -0.01, false);
+part_type_direction(_bossDeathPartType, 0, 360, 0, 0.001);
+//part_type_death(_bossDeathPartType,2,_asteroidBoomPartType2);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Systems
+instance_create(0,0, objStarRenderer);
+instance_create(0,0, objAsteroidThrower);
+instance_create(0,0, objMiniMap);
+instance_create(0,0, objBigMap);
+instance_create(0,0, objGooSystem);
+instance_create(0,0, objDisplay);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Planets
+
+_planetStartNames = ds_list_create();
+ds_list_add(_planetStartNames,
+            "Vallas",
+            "Kouros",
+            "Aetos",
+            "Tomara",
+            "Zena",
+            "Irus",
+            "Darius",
+            "Ploto",
+            "Jool",
+            "Kaspilaria",
+            "Fred",
+            "Bobo",
+            "Ostao",
+            "Leplichi",
+            "Owen",
+            "Dima",
+            "Dimablyat",
+            "Jacopono",
+            "Jacoopius",
+            "Pioto",
+            "Cobyus"            
+            );
+
+
+_planets = ds_list_create();
+if (game_is_tutorial()) {
+    ds_list_add(_planets, instance_create(16 * 500 * 1,  16 * 500 * 0, objPlanet));
+    ds_list_add(_planets, instance_create(16 * 500 * 1,  16 * 500 * 6, objPlanet));
+    ds_list_add(_planets, instance_create(16 * 500 * 5,  16 * 500 * 5, objPlanet));
+    ds_list_add(_planets, instance_create(16 * 500 * 10, 16 * 500 * 4, objPlanet));
+} else {
+    var mapSize = 16 * 500 * 6;
+    for(var i = 0; i &lt; 30; i++) {
+        var xRandom = random(mapSize) - mapSize/2;
+        var yRandom = random(mapSize) - mapSize/2;
+        var planet = instance_create(xRandom, yRandom, objPlanet);
+        
+        // Check with collisions for all other planets
+        var collided = false;
+
+        // Avoid spawning on top of the boss
+        var bossDistanceSqr = sqr(planet.x - objBoss.x) + sqr(planet.y - objBoss.y);
+        if (bossDistanceSqr &lt; sqr(600)) {
+            collided = true;
+        }
+        if (!collided) {
+            for(var j = 0; j &lt; i; j++) {
+                var otherPlanet = _planets[| j];
+                var r = planet._radius + planet._atmosphereHeight;
+                var otherR = otherPlanet._radius + otherPlanet._atmosphereHeight;
+                var distSqr = sqr(planet.x - otherPlanet.x) + sqr(planet.y - otherPlanet.y);
+                if distSqr &lt; sqr(r + otherR + 100) {
+                    collided = true;
+                    break;
+                }
+            }
+        }
+
+        if (collided) {
+            instance_destroy(planet);
+            i--;
+        } else {
+            ds_list_add(_planets, planet);
+        }
+    }
+}
+
+_targetPlanet = noone;
+</string>
+          </argument>
+        </arguments>
+      </action>
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -48,115 +290,135 @@ _dtime = 1;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Systems
-instance_create(0,0, objStarRenderer);
-instance_create(0,0, objAsteroidThrower);
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Static particle systems
-
-_mainPartSystem = part_system_create();
-part_system_depth(_mainPartSystem, 1);
-
-// BULLET
-_bulletPartType = part_type_create();
-
-part_type_sprite(_bulletPartType, sprBulletTrail, false, false, false);
-part_type_alpha2(_bulletPartType, 0.9, 0);
-part_type_life(_bulletPartType, 30, 40);
-part_type_blend(_bulletPartType, bm_add);
-
-// ASTEROID
-_asteroidBoomPartType1 = part_type_create();
-part_type_sprite(_asteroidBoomPartType1, sprAsteroid, false, true, true);
-part_type_alpha2(_asteroidBoomPartType1, 0.9, 0.1);
-part_type_scale(_asteroidBoomPartType1,0.2, 0.2);
-part_type_life(_asteroidBoomPartType1, 60, 120);
-part_type_speed(_asteroidBoomPartType1, 2, 5, -0.01, false);
-part_type_direction(_asteroidBoomPartType1, 0, 360, 0, 0.001);
-_asteroidBoomPartType2 = part_type_create();
-part_type_shape(_asteroidBoomPartType2, pt_shape_explosion);
-part_type_colour3(_asteroidBoomPartType2, $112ff4, $11f4f4, $6b9b9b);
-part_type_alpha2(_asteroidBoomPartType2, 0.9, 0.1);
-part_type_scale(_asteroidBoomPartType2,0.6, 0.6);
-part_type_life(_asteroidBoomPartType2, 30, 60);
-part_type_orientation(_asteroidBoomPartType2, 0, 360, 1, 1, false);
-part_type_blend(_asteroidBoomPartType2, bm_add);
-part_type_size(_asteroidBoomPartType2, 0.8, 1.2, -0.01, 0);
-//part_type_blend(_bulletPartType, bm_normal);
-
-
-// SHIP EXPLODY
-_shipBoomPartType = part_type_create();
-part_type_shape(_shipBoomPartType, pt_shape_explosion);
-part_type_colour3(_shipBoomPartType, $a11ff4, $11f4f4, $6b9b9b);
-part_type_alpha2(_shipBoomPartType, 1, 0.1);
-part_type_scale(_shipBoomPartType,0.6, 0.6);
-part_type_life(_shipBoomPartType, 60, 90);
-part_type_orientation(_shipBoomPartType, 0, 360, 1, 1, false);
-part_type_blend(_shipBoomPartType, bm_add);
-part_type_size(_shipBoomPartType, 0.2, 2.2, 0.05, 0.01);
-part_type_speed(_shipBoomPartType, 2, 3, -0.01, false);
-part_type_direction(_shipBoomPartType, 0, 360, 0, 0.001);
-
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
             <string>/// Camera variables
 _cameraShake = 0;
 _cameraShakeDampener = 0.8;
+_cameraScale = 1;
 </string>
           </argument>
         </arguments>
       </action>
       <action>
         <libid>1</libid>
-        <id>222</id>
-        <kind>0</kind>
+        <id>603</id>
+        <kind>7</kind>
         <userelative>0</userelative>
         <isquestion>0</isquestion>
-        <useapplyto>0</useapplyto>
-        <exetype>1</exetype>
-        <functionname>action_next_room</functionname>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
         <codestring></codestring>
         <whoName>self</whoName>
         <relative>0</relative>
         <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Escape drive counter
+_escapeDriveCount = 0;
+_escapeDriveMax = 3;//3;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Is game beat?
+_gameDone = false;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Misc audio
+
+if (os_browser != browser_not_a_browser) {
+    audio_channel_num(32);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="2">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Game done
+if _gameDone {
+    objShip.velX = 0;
+    objShip.velY = 0;
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// DEBUG ONLY
+
+window_set_caption("LD42: Space time! | " + string(fps));
+</string>
+          </argument>
+        </arguments>
       </action>
     </event>
     <event eventtype="3" enumb="0">
@@ -199,11 +461,244 @@ _time += _dtime;
         <arguments>
           <argument>
             <kind>1</kind>
+            <string>/// Target planet
+
+_targetPlanet = noone;
+
+var nearestPlanet = noone;
+var shortestDistanceSqr = 9999999999;
+
+// Get the nearest planet
+for(var i = 0; i &lt; ds_list_size(_planets); i++) {
+    var planet = _planets[| i];
+
+    var distanceSqr = sqr(planet.x - objShip.x) + sqr(planet.y - objShip.y);
+    if (distanceSqr &lt; shortestDistanceSqr) {
+        nearestPlanet = planet;
+        shortestDistanceSqr = distanceSqr;
+    }
+}
+
+// If the planet is close enough, it's our target!
+if ( shortestDistanceSqr &lt; sqr(16 * 300 * 1.4 * 0.5)) {
+    _targetPlanet = nearestPlanet;
+}
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Big map
+objBigMap.visible = keyboard_check(vk_tab);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
             <string>/// Camera
+
+view_wview = 480 * _cameraScale;
+view_hview = 360 * _cameraScale;
+
 _cameraShake *= _cameraShakeDampener;
 </string>
           </argument>
         </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="73">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// DEBUG TESTING ONLY
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="72">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Draw background
+
+var gd = distance_to_goo_origin(view_xview + view_wview / 2, view_yview + view_hview/2);
+
+if (gd &lt; 3000) {
+    var factor = (1 - gd / 3000);
+    var cfactor = clamp(255 * factor, 0, 155);
+    draw_clear(make_color_rgb(cfactor, cfactor / 5, cfactor / 6));
+
+    // Draw creepyish background
+    draw_background_tiled_ext(bkBoss, objShip.x * 0.5 + 0.5*_time, objShip.y * 0.5 + 0.2*_time, 1, 1, c_white, factor);
+    
+} else {
+    draw_clear(c_black);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="64">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Draw how many escape drive and Planet text
+display_set_gui_size(view_wport, view_hport);
+
+draw_set_font(font_bigish);
+draw_set_color(c_white);
+draw_set_alpha(1);
+if (!objBoss._playerSpotted) {
+    if (_escapeDriveCount &lt; _escapeDriveMax)
+        draw_text(16, 16, "Escape drives Collected: #" + string(_escapeDriveCount) + " / " + string(_escapeDriveMax));
+    
+    var planet = get_target_planet();
+    if (planet != noone) {
+        var text = "Near Planet " + planet._name;
+        draw_set_halign(fa_middle);
+        
+        switch (planet._planetStatus) {
+            case PLANET_STATUS.UNVISITED:
+                text += "#Unexplored";
+                draw_set_color(c_yellow);
+                break;
+            case PLANET_STATUS.VISITED:
+                text += "#Explored";
+                draw_set_color(c_green);
+                break;
+            case PLANET_STATUS.DEAD:
+                text += "#DEAD";
+                draw_set_color(c_red);
+        }
+        draw_text(view_wport/2, 32, text);
+        draw_set_halign(fa_left);
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// If within goo zone, danger zone!
+
+if is_inside_goo_radius(objShip.x, objShip.y) {
+    draw_sprite_ext(sprUIGooWarning, 0, view_wport/2 - 100, view_hport - 64, 2, 2, 0, c_white, 0.7+0.3*sin(2*pi*_time/120));
+}
+
+if (get_target_planet_death_timer() != -1) {
+    draw_set_font(font_bigish);
+    var time = get_target_planet_death_timer() / 60;
+    if (time &gt; 0) {
+        draw_text(view_wport/2 - 100, view_hport - 64 - 16, "PLANET DEATH IN " + string(time) + "s");
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="9" enumb="82">
+      <action>
+        <libid>1</libid>
+        <id>331</id>
+        <kind>0</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>0</useapplyto>
+        <exetype>1</exetype>
+        <functionname>action_restart_game</functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
       </action>
     </event>
   </events>

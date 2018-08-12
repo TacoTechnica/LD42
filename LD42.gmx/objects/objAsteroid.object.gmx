@@ -104,6 +104,80 @@ _maxDistanceFromPlayer = view_wview * 2;
           </argument>
         </arguments>
       </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Atmosphere burn
+_burn = 0; // 0 to 1, in intensity.
+
+_burnEmitter = part_emitter_create(Gamestate._mainPartSystem);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Don't spawn inside of planets
+
+if (get_target_planet_atmosphere_density(x, y) != 0) {
+    instance_destroy();
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="1" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Clean up
+
+part_emitter_destroy(Gamestate._mainPartSystem, _burnEmitter);
+</string>
+          </argument>
+        </arguments>
+      </action>
     </event>
     <event eventtype="3" enumb="0">
       <action>
@@ -146,19 +220,76 @@ image_angle += _velRotation;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Collide with player?
+            <string>/// Collide with player and enemies
 
 var ship = instance_place(x, y, objShip);
 
-if (ship != noone) {
-    ship._health --;
-    ship._hitTimer = 0;
+if (ship != noone &amp;&amp; !ship._invulnurable) {
+    ship_hit();
     ship._velX += _velX;
     ship._velY += _velY;
     
-    camera_apply_shake(15);
+    camera_apply_shake(70);
 
     _dead = true;
+}
+
+var enemy = instance_place(x, y, objEnemy);
+
+if (enemy != noone) {
+    enemy._health = 0;
+    _dead = true;
+}
+
+var plane = instance_place(x, y, objPlaneEnemy);
+
+if (plane != noone) {
+    plane._dead = true;
+    _dead = true;
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Atmosphere burn
+
+var density = get_target_planet_atmosphere_density(x, y);
+_burn = density;
+
+_health -= _burn * 0.05;
+
+if (density &gt;= 0.99) {
+    _health = 0;
+}
+
+// Pull towards the planet and burn with particles!
+if (_burn &gt; 0.01) {
+    var forceAngle = point_direction(x, y, get_target_planet_x(), get_target_planet_y());
+    var force = sqr(density) * 0.6;
+
+    _velX += lengthdir_x(force, forceAngle);
+    _velY += lengthdir_y(force, forceAngle);
+
+    // TODO: This doesn't seem to work...
+    part_type_alpha3(Gamestate._asteroidBurnPartType, 0.1 + 0.4 * density, 0.1 + 0.7 * density, 0.1 + 0.4 * density);
+    part_emitter_region(Gamestate._mainPartSystem, _burnEmitter, x - 8, x + 8, y - 8, y + 8, ps_shape_ellipse, ps_distr_linear); 
+    part_emitter_burst(Gamestate._mainPartSystem, _burnEmitter, Gamestate._asteroidBurnPartType, 2);
 }
 </string>
           </argument>
@@ -184,6 +315,7 @@ if (ship != noone) {
 
 if (_health &lt;= 0) {
     _dead = true;
+
 }
 
 if (_dead) {
@@ -194,7 +326,13 @@ if (_dead) {
     part_emitter_burst(Gamestate._mainPartSystem, boomEmitter, Gamestate._asteroidBoomPartType2, random(4) + 6);
     part_emitter_destroy(Gamestate._mainPartSystem, boomEmitter);
 
+    // Health drop
+    if (!place_meeting(x, y, objShip) &amp;&amp; objShip._health &lt; objShip._healthMax &amp;&amp; (game_is_tutorial() || random(2) &lt; 1)) {
+        instance_create(x, y, objHealthPack);
+    }
+    
     camera_apply_shake(5);
+    play_sound_spatial(soundAsteroidDeath, x, y, 1);
 
     instance_destroy();
 }
@@ -267,10 +405,14 @@ if sqr(x - objShip.x) + sqr(y - objShip.y) &gt; _maxDistanceFromPlayer*_maxDista
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Draw asteroid with hit if necessary
+            <string>/// Draw asteroid with hit if necessary AND burn
 
 // Scales the non-red components down by this
 var scaleBack = 255 * min(1, _hitTimer / _hitTimerTime);
+
+scaleBack -= 255 * 4*_burn;
+
+scaleBack = clamp(scaleBack, 0, 255);
 
 draw_sprite_ext(sprite_index, image_index, x, y, image_xscale, image_yscale, image_angle, make_colour_rgb(255, scaleBack, scaleBack), 1);
 </string>

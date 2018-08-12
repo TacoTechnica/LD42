@@ -83,6 +83,32 @@ _lastYpos = y;
         </arguments>
       </action>
     </event>
+    <event eventtype="1" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Clean up
+
+part_emitter_destroy(Gamestate._mainPartSystem, _partEmitter);
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="3" enumb="0">
       <action>
         <libid>1</libid>
@@ -125,12 +151,19 @@ y += _velY;
             <kind>1</kind>
             <string>/// Collisions
 
-var asteroidKnockback = 2.5;
+var asteroidKnockback = 0.6;
+var enemyKnockback = 3;
 
+
+// Asteroid
 var asteroid = collision_line(x, y, _lastXpos, _lastYpos, objAsteroid, true, false);
 
 if (asteroid != noone) {
     asteroid._health--;
+
+    if (sqr(objShip.x - asteroid.x) + sqr(objShip.y - asteroid.y) &lt; sqr(64)) {
+        asteroidKnockback = 5;
+    }
     asteroid._velX += lengthdir_x(asteroidKnockback, image_angle);
     asteroid._velY += lengthdir_y(asteroidKnockback, image_angle);
     
@@ -140,6 +173,40 @@ if (asteroid != noone) {
     instance_destroy();
 }
 
+
+// Enemy
+var enemy = collision_line(x, y, _lastXpos, _lastYpos, objEnemy, true, false);
+
+if (enemy != noone) {
+    enemy._health--;
+
+    enemy._hitTimer = 0;
+    enemy._hitAngleOffset = random(120) - 60;
+
+    enemy._velX += lengthdir_x(enemyKnockback, image_angle);
+    enemy._velY += lengthdir_y(enemyKnockback, image_angle);
+
+    bullet_poof(x, y);
+    instance_destroy();
+}
+
+// Plane
+var plane = collision_line(x, y, _lastXpos, _lastYpos, objPlaneEnemy, true, false);
+
+if (plane != noone) {
+    plane._death = true;
+
+    bullet_poof(x, y);
+    instance_destroy();
+}
+
+// Boss
+
+if collision_line(x, y, _lastXpos, _lastYpos, objBoss, true, false) != noone {
+    objBoss._health--;
+    bullet_poof(x, y);
+    instance_destroy();    
+}
 </string>
           </argument>
         </arguments>
@@ -163,7 +230,6 @@ if (asteroid != noone) {
             <string>/// Destroy if far enough from player
 
 if sqr(x - objShip.x) + sqr(y - objShip.y) &gt; _maxDistanceFromPlayer*_maxDistanceFromPlayer {
-    part_emitter_destroy(Gamestate._mainPartSystem, _partEmitter);
     instance_destroy();
 }
 </string>

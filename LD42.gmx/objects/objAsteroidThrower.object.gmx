@@ -27,7 +27,7 @@
             <kind>1</kind>
             <string>/// Asteroid throwing properties
 
-_throwChance = 2 / 60;
+_throwChance = 1 / 60;
 _throwRadius = point_distance(0, 0, view_wview / 2, view_hview / 2) - 32;
 </string>
           </argument>
@@ -53,19 +53,37 @@ _throwRadius = point_distance(0, 0, view_wview / 2, view_hview / 2) - 32;
             <kind>1</kind>
             <string>/// Throw asteroids randomly
 
-while (random(1) &lt; _throwChance) {
+var chance = _throwChance;
+
+if (game_is_tutorial()) chance = 0;
+
+if (get_target_planet_atmosphere_density(objShip.x, objShip.y) &gt; 0.01) {
+    chance = 0;
+}
+
+if distance_to_goo_origin(objShip.x, objShip.y) &lt; 3000 {
+    if (objBoss._attack != BOSS_ATTACK.ASTEROIDS) {
+        chance = 0;
+    } else {
+        chance = 4 / 60;
+    }
+}
+
+while (random(1) &lt; chance) {
     // Throw asteroid!
     var angleRandom = random(360);
     var xa = view_xview + view_wview/2 + lengthdir_x(_throwRadius, angleRandom);
     var ya = view_yview + view_hview/2 + lengthdir_y(_throwRadius, angleRandom);
     var moveAngle = angleRandom - 180 + random(40) - 20; // What angle we're traveling at?
 
-    var moveSpeed = random(1) + 3;
+    var moveSpeed = random(1) + 2;
     
     var asteroid = instance_create(xa, ya, objAsteroid);
-    asteroid._velX = lengthdir_x(moveSpeed, moveAngle);
-    asteroid._velY = lengthdir_y(moveSpeed, moveAngle);
-    asteroid._velRotation = 0.4 * (random(moveSpeed * 2) - moveSpeed);
+    if instance_exists(asteroid) {
+        asteroid._velX = lengthdir_x(moveSpeed, moveAngle);
+        asteroid._velY = lengthdir_y(moveSpeed, moveAngle);
+        asteroid._velRotation = 0.4 * (random(moveSpeed * 2) - moveSpeed);
+    }
 }
 </string>
           </argument>

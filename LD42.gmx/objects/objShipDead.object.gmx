@@ -111,6 +111,10 @@ camera_apply_shake(100);
 
 _done = true;
 visible = false;
+
+display_text("Press R to go back to the menu", c_white, 99999);
+
+audio_play_sound(soundPlayerDeath, 1, false);
 </string>
           </argument>
         </arguments>

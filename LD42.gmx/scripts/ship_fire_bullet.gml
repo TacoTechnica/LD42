@@ -20,4 +20,7 @@ bullet._velX = ship._velX + lengthdir_x(bulletSpeed, angle);
 bullet._velY = ship._velY + lengthdir_y(bulletSpeed, angle);
 bullet.image_angle = angle;
 
+
+audio_play_sound(soundMaschineGun,1,false);
+
 return bullet;

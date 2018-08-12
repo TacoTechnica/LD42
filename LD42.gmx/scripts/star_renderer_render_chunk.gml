@@ -27,7 +27,7 @@ for(var i = 0; i < starCount; i++) {
     var sx = random_with_seed(startSeed++, cw);
     var sy = random_with_seed(startSeed++, ch);
     var starIndex = floor(random_with_seed(startSeed++, sprite_get_number(sprStars)));
-    draw_sprite_ext(sprStars, starIndex, xpos + sx, ypos + sy, 1 - p + 0.1, 1 - p + 0.1, 0, c_white, 1);
+    draw_sprite_ext(sprStars, starIndex, xpos + sx, ypos + sy, 1 - p + 0.1, 1 - p + 0.1, 0, c_white, draw_get_alpha());
 }
 
 // Reset the random seed so we can go on!

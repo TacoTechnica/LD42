@@ -59,6 +59,15 @@ var quadrantY = floor(view_yview / _chunkHeight);
 // Parallax depth (0 is regular)
 var p = 0.5;
 
+// Draw them less when we're by the surface
+draw_set_alpha( 1 - get_target_planet_atmosphere_density(view_xview + view_wview/2, view_yview + view_hview/2));
+
+var gd = distance_to_goo_origin(view_xview + view_wview / 2, view_yview + view_hview/2);
+
+if (gd &lt; 6000) {
+    draw_set_alpha(draw_get_alpha() * gd / 6000);
+}
+
 star_renderer_render_chunk(quadrantX,   quadrantY,   _chunkWidth, _chunkHeight, p);
 star_renderer_render_chunk(quadrantX+1, quadrantY,   _chunkWidth, _chunkHeight, p);
 star_renderer_render_chunk(quadrantX,   quadrantY+1, _chunkWidth, _chunkHeight, p);

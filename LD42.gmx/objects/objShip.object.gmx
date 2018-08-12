@@ -3,7 +3,7 @@
   <spriteName>sprShip</spriteName>
   <solid>0</solid>
   <visible>-1</visible>
-  <depth>0</depth>
+  <depth>-10</depth>
   <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
@@ -25,11 +25,34 @@
         <arguments>
           <argument>
             <kind>1</kind>
+            <string>/// Offset angle
+image_angle += 90;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
             <string>/// Inputs
 
 _input_thrust = 0;
 _input_rotation = 0;
 _input_strafe = 0;
+_input_brake = 0;
 </string>
           </argument>
         </arguments>
@@ -80,7 +103,7 @@ _velRotation = 0;
 _maxVel = 5;
 _angularDampener = 0.9;
 
-_sideFriction = 0.05;
+_sideFriction = 0.05 * 1;
 </string>
           </argument>
         </arguments>
@@ -103,11 +126,11 @@ _sideFriction = 0.05;
             <kind>1</kind>
             <string>/// Ship control constants
 
-_thrustForce = 0.4;
+_thrustForce = 0.4 * 0.8;
 _rcsForce = 0.3;
 _turnTorque = 4;
 
-_sideBoostForce = 14;
+_sideBoostForce = 7;
 </string>
           </argument>
         </arguments>
@@ -130,7 +153,7 @@ _sideBoostForce = 14;
             <kind>1</kind>
             <string>/// Ship control util
 _sideBoostCounter = 0;
-_sideBoostCounterTime = 0 * 60;
+_sideBoostCounterTime = 30;
 _side_boost = 0; // Are we side boosting? What direction?
 
 // Weapon firing delay
@@ -161,13 +184,97 @@ _strafeDoubleTapDirection = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Health and overheating
+            <string>/// Health, overheating, and invulnurability
 _health = 5;
+_healthMax = 5;
 
 _dead = false;
 
 _hitTimer = 0;
 _hitTimerTime = 10;
+
+_invulnurable = false;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Hyperdrive
+_hyperDriveCells = 0;
+_hyperDriveCellsMax = 5;
+
+_hyperDriveLeapDistance = 16 * 200 * 8;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Hyperdrive
+var dx = lengthdir_x(_hyperDriveLeapDistance, image_angle);
+var dy = lengthdir_y(_hyperDriveLeapDistance, image_angle);
+
+x += dx;
+y += dy;
+
+_hyperDriveCells = 0;
+
+audio_play_sound(soundWarp,1,false);
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// No longer invulnurable
+_invulnurable = false;
 </string>
           </argument>
         </arguments>
@@ -194,9 +301,10 @@ _hitTimerTime = 10;
 
 if (!_dead) {
 
-    _input_thrust = keyboard_check(vk_up);
+    _input_thrust = keyboard_check(vk_up) - keyboard_check(vk_down);
     _input_rotation = keyboard_check(vk_left) - keyboard_check(vk_right);
     _input_strafe = keyboard_check(ord("D")) - keyboard_check(ord("A"));
+    _input_brake = keyboard_check(vk_control);
     
     // Side boosting
     _side_boost = 0;
@@ -205,6 +313,9 @@ if (!_dead) {
         if (_input_strafe == _strafeDoubleTapDirection &amp;&amp; _strafeDoubleTapCounter &lt;= _strafeDoubleTapCounterTime) {
             // If it's within the timing, strafe away!
             if (_sideBoostCounter &gt;= _sideBoostCounterTime) {
+
+                _invulnurable = true;
+
                 _side_boost = _input_strafe;
                 _sideBoostCounter = 0;
                 _strafeDoubleTapCounter = 0;
@@ -229,9 +340,44 @@ if (!_dead) {
     _velX += _input_thrust * lengthdir_x(_thrustForce, image_angle);
     _velY += _input_thrust * lengthdir_y(_thrustForce, image_angle);
     
+    
+    if (_input_brake) {
+        _velX *= 0.95;
+        _velY *= 0.95;   
+    }
+    
     // Rotate
     _velRotation = _input_rotation * _turnTorque;
 
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Collide with planets
+
+
+if get_target_planet_atmosphere_density(x, y) &gt;= 1 {
+    var planet = get_target_planet();
+    var angle = point_direction(planet.x, planet.y, x, y);
+    x = planet.x + lengthdir_x(planet._radius + 1, angle);
+    y = planet.y + lengthdir_y(planet._radius + 1, angle);
 }
 </string>
           </argument>
@@ -430,6 +576,82 @@ if (visible &amp;&amp; _dead) {
           </argument>
         </arguments>
       </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Hyperdrive
+
+if (!_dead &amp;&amp; objBigMap.visible &amp;&amp; _hyperDriveCells &gt;= _hyperDriveCellsMax) {
+    if (alarm[1] == -1 &amp;&amp; keyboard_check_pressed(vk_space)) {
+        alarm[1] = 30;
+    }
+}
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Sound?
+audio_listener_position(x, y, 0);
+audio_listener_orientation(0, 0, 1, lengthdir_x(1, view_angle), lengthdir_y(1, view_angle),0);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Deactivate planes far away from me
+
+instance_deactivate_object(objPlaneEnemy);
+var r = 4000;
+instance_activate_region(objShip.x - r, objShip.y - r, r*2, r*2, true);
+</string>
+          </argument>
+        </arguments>
+      </action>
     </event>
     <event eventtype="7" enumb="7">
       <action>
@@ -451,6 +673,7 @@ if (visible &amp;&amp; _dead) {
             <string>/// If we're flipping, stop flipping
 if sprite_index == sprShipFlip {
     sprite_index = sprShip;
+    alarm[0] = 10;
 }
 </string>
           </argument>
@@ -474,9 +697,18 @@ if sprite_index == sprShipFlip {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Health bar
+            <string>/// Health bar and hyperdrive
+display_set_gui_size(view_wport, view_hport);
 
-draw_sprite_ext(sprUIHealthBar, 5 - _health, 32*2, view_hport - 64*2,2,2,0,c_white,1);
+if (!objBoss._playerSpotted) {
+    draw_sprite_ext(sprUIHyperDrive2, 5 - _hyperDriveCells, view_wport - 128 - 96, 16, 2, 2, 0, c_white, 1);
+}
+
+var healthUI = sprUIHealthBar;
+if (_healthMax == 10) {
+    healthUI = sprUIHealthBar2;
+}
+draw_sprite_ext(healthUI, _healthMax - _health, view_wport - 128 - 32*4, view_hport - 64*2.5,3,3,0,c_white,1);
 </string>
           </argument>
         </arguments>
@@ -505,6 +737,73 @@ draw_sprite_ext(sprUIHealthBar, 5 - _health, 32*2, view_hport - 64*2,2,2,0,c_whi
 var scaleBack = 255 * min(1, _hitTimer / _hitTimerTime);
 
 draw_sprite_ext(sprite_index, image_index, x, y, image_xscale, image_yscale, image_angle, make_colour_rgb(255, scaleBack, scaleBack), 1);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// If within planet: Draw arrow to ring course and ring course info
+
+if (get_target_planet() != noone &amp;&amp; get_target_planet_rings_left() &gt; 0) {
+    var rx = get_target_planet_ring_course_x();
+    var ry = get_target_planet_ring_course_y();
+    var angle = point_direction(x, y, rx, ry);
+    var dx = lengthdir_x(16, angle);
+    var dy = lengthdir_y(16, angle);
+
+    draw_set_color(c_yellow);
+    draw_arrow(x + dx, y + dy, x + dx*2, y + dy*2, 10);
+
+    // Ring counter
+    draw_set_font(font_small);
+    draw_text_transformed(x + 16, y + 16, "Rings Left: " + string(get_target_planet_rings_left()), 1, 1, -90 + image_angle);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="9" enumb="112">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// DEBUG
+
+// Teleport to center
+
+x = objGooSystem._gooOriginX + 2000;
+y = objGooSystem._gooOriginY;
+
+
+//instance_create(0, 0, objDistressCall);
 </string>
           </argument>
         </arguments>

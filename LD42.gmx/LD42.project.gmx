@@ -4,31 +4,78 @@
     <Config>Configs\Default</Config>
   </Configs>
   <NewExtensions/>
-  <sounds name="sound"/>
+  <sounds name="sound">
+    <sound>sound\soundPlayerDeath</sound>
+    <sound>sound\soundAsteroidDeath</sound>
+    <sound>sound\soundMaschineGun</sound>
+    <sound>sound\soundBulletPoof</sound>
+    <sound>sound\soundPew</sound>
+    <sound>sound\soundEnemyDeath</sound>
+    <sound>sound\soundHealth</sound>
+    <sound>sound\soundBeeper</sound>
+    <sound>sound\soundHyperdriveReady</sound>
+    <sound>sound\soundWarning</sound>
+    <sound>sound\soundEscapeDriveTankObtained</sound>
+    <sound>sound\soundWarp</sound>
+    <sound>sound\soundWhoosh</sound>
+    <sounds name="music">
+      <sound>sound\musicBattyMcFaddin</sound>
+    </sounds>
+  </sounds>
   <sprites name="sprites">
     <sprite>sprites\sprShip</sprite>
     <sprite>sprites\sprShipDead</sprite>
     <sprite>sprites\sprShipFlip</sprite>
     <sprite>sprites\sprAsteroid</sprite>
+    <sprite>sprites\sprHealthPack</sprite>
+    <sprite>sprites\sprHyperDrivePack</sprite>
+    <sprite>sprites\sprEscapeDrivePack</sprite>
     <sprite>sprites\sprStars</sprite>
     <sprite>sprites\sprBullet</sprite>
     <sprite>sprites\sprBulletTrail</sprite>
     <sprites name="ui">
+      <sprite>sprites\sprUIHyperDrive2</sprite>
+      <sprite>sprites\sprUIHyperDrive</sprite>
       <sprite>sprites\sprUIHealthBar</sprite>
+      <sprite>sprites\sprUIHealthBar2</sprite>
+      <sprite>sprites\sprUIGooWarning</sprite>
       <sprite>sprites\sprUIOverHeating</sprite>
+      <sprites name="minimap">
+        <sprite>sprites\sprMinimapWindow</sprite>
+        <sprite>sprites\sprMinimapPlayer</sprite>
+        <sprite>sprites\sprMinimapEnemy</sprite>
+        <sprite>sprites\sprMinimapPlanet</sprite>
+        <sprite>sprites\sprMinimapWarpDestination</sprite>
+        <sprite>sprites\sprMinimapGooOrigin</sprite>
+      </sprites>
     </sprites>
+    <sprite>sprites\sprEnemyBullet</sprite>
+    <sprite>sprites\sprEnemy</sprite>
+    <sprite>sprites\sprPlanetRing</sprite>
+    <sprite>sprites\sprPlanetPlane</sprite>
+    <sprite>sprites\sprBossEye</sprite>
+    <sprite>sprites\sprBossBody</sprite>
+    <sprite>sprites\sprBossLaser</sprite>
   </sprites>
-  <backgrounds name="background"/>
+  <backgrounds name="background">
+    <background>background\bkTutorial</background>
+    <background>background\bkTutorialSummary</background>
+    <background>background\bkMessage</background>
+    <background>background\bkBoss</background>
+    <background>background\bkThankYou</background>
+  </backgrounds>
   <paths name="paths"/>
   <scripts name="scripts">
     <scripts name="gamestate">
       <script>scripts\game_get_dtime.gml</script>
       <script>scripts\game_set_dtime.gml</script>
+      <script>scripts\game_is_tutorial.gml</script>
     </scripts>
     <scripts name="camera">
       <script>scripts\camera_follow.gml</script>
       <script>scripts\camera_follow_ship.gml</script>
       <script>scripts\camera_apply_shake.gml</script>
+      <script>scripts\camera_set_scale.gml</script>
     </scripts>
     <scripts name="math">
       <script>scripts\random_with_seed.gml</script>
@@ -36,23 +83,73 @@
     <scripts name="misc">
       <script>scripts\star_renderer_render_chunk.gml</script>
       <script>scripts\bullet_poof.gml</script>
+      <script>scripts\is_inside_goo_radius.gml</script>
+      <script>scripts\play_sound_spatial.gml</script>
+      <script>scripts\display_text.gml</script>
+      <script>scripts\distance_to_goo_origin.gml</script>
     </scripts>
     <scripts name="ship">
       <script>scripts\ship_fire_bullet.gml</script>
+      <script>scripts\enemy_fire_bullet.gml</script>
+      <script>scripts\ship_hit.gml</script>
+    </scripts>
+    <scripts name="planet">
+      <script>scripts\get_target_planet.gml</script>
+      <script>scripts\get_target_planet_atmosphere_density.gml</script>
+      <script>scripts\get_target_planet_x.gml</script>
+      <script>scripts\get_planets.gml</script>
+      <script>scripts\random_planet_name.gml</script>
+      <script>scripts\get_target_planet_rings_left.gml</script>
+      <script>scripts\get_target_planet_ring_course_x.gml</script>
+      <script>scripts\get_target_planet_death_timer.gml</script>
     </scripts>
   </scripts>
+  <fonts name="fonts">
+    <font>fonts\font_small</font>
+    <font>fonts\font_bigish</font>
+  </fonts>
   <objects name="objects">
     <object>objects\Gamestate</object>
-    <object>objects\objAsteroidThrower</object>
-    <object>objects\objStarRenderer</object>
+    <object>objects\objPlanet</object>
     <object>objects\objShip</object>
     <object>objects\objAsteroid</object>
     <object>objects\objBullet</object>
+    <object>objects\objBossLaser</object>
+    <object>objects\objBulletEnemy</object>
     <object>objects\objShipDead</object>
+    <objects name="Systems">
+      <object>objects\objMiniMap</object>
+      <object>objects\objBigMap</object>
+      <object>objects\objStarRenderer</object>
+      <object>objects\objAsteroidThrower</object>
+      <object>objects\objGooSystem</object>
+      <object>objects\objDisplay</object>
+      <object>objects\objDistressCall</object>
+    </objects>
+    <object>objects\objHealthPack</object>
+    <object>objects\objHyperDrivePack</object>
+    <object>objects\objEscapeDrivePack</object>
+    <object>objects\objPlusOneEffect</object>
+    <object>objects\objEnemy</object>
+    <object>objects\objPlaneEnemy</object>
+    <object>objects\objRing</object>
+    <object>objects\objRingCourse</object>
+    <objects name="Tutorial">
+      <object>objects\objTutorialRock</object>
+      <object>objects\objTutorialEscapeTank</object>
+      <object>objects\objTutorialSummary</object>
+    </objects>
+    <objects name="Title">
+      <object>objects\objTitleScreen</object>
+    </objects>
+    <object>objects\objBoss</object>
   </objects>
   <rooms name="rooms">
-    <room>rooms\roomSTART</room>
+    <room>rooms\roomTitle</room>
+    <room>rooms\roomSummary</room>
     <room>rooms\roomBASE</room>
+    <room>rooms\roomTutorial</room>
+    <room>rooms\roomThankyou</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>
