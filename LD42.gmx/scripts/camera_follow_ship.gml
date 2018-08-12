@@ -15,8 +15,11 @@ var spdsqr = sqr(vx) + sqr(vy);
 //var velAngle = point_direction(0,0, vx, vy);
 var camExtraAngle = ship.image_angle;
 var camDist = maxDistance * (1 - 1 / (slowDownCurve * spdsqr + 1));
-if (ship._input_thrust < 0) {
-    camDist = 0;
+
+if (!objBoss._playerSpotted) {
+    if (ship._input_thrust < 0 || (ship._input_thrust == 0 && ship._frontVel < 0)) {
+        camDist = 0;
+    }
 }
 
 camera_follow(

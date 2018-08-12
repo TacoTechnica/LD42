@@ -4,5 +4,4 @@ var sound = argument0,
     ya = argument2,
     priority = argument3;
     
-audio_play_sound_at(sound, xa, ya, 0, 400, 1280, 1, false, priority);
-
+return audio_play_sound_at(sound, xa, ya, 0, 400, 1280, 1, false, priority);

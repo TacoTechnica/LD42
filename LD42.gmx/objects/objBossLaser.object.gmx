@@ -151,13 +151,18 @@ y += _velY;
             <kind>1</kind>
             <string>/// Collisions
 
-var player = collision_line(x, y, _lastXpos, _lastYpos, objShip, true, false);
+var r = 8;
+var colliding = 
+     collision_line(x, y, _lastXpos, _lastYpos, objShip, true, false) != noone
+  || collision_line(x + r, y, _lastXpos + r, _lastYpos, objShip, true, false) != noone
+  || collision_line(x, y + r, _lastXpos, _lastYpos + r, objShip, true, false) != noone
+  || collision_line(x + r, y + r, _lastXpos + r, _lastYpos + r, objShip, true, false) != noone
 
-if (player != noone) {
-    player._health--;
+if (colliding) {
+    objShip._health--;
 
-    player._hitTimer = 0;
-    player._hitAngleOffset = random(120) - 60;
+    objShip._hitTimer = 0;
+    objShip._hitAngleOffset = random(120) - 60;
 
     //player._velX += lengthdir_x(0, image_angle);
     //player._velY += lengthdir_y(0, image_angle);

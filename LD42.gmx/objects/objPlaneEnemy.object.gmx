@@ -131,7 +131,7 @@ _velY = 0;
             <string>/// Fire bullet
 
 if (!game_is_tutorial() &amp;&amp; _seesPlayer) {
-    enemy_fire_bullet(id, point_direction(x,y,objShip.x,objShip.y));
+    enemy_fire_bullet(id, point_direction(x,y,objShip.x,objShip.y), false);
 }
 
 alarm[0] = 60 + random(30);

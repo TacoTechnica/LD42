@@ -18,8 +18,13 @@
     <sound>sound\soundEscapeDriveTankObtained</sound>
     <sound>sound\soundWarp</sound>
     <sound>sound\soundWhoosh</sound>
+    <sound>sound\soundLaser</sound>
+    <sound>sound\soundJetEngine</sound>
+    <sound>sound\soundWhoosh2</sound>
     <sounds name="music">
       <sound>sound\musicBattyMcFaddin</sound>
+      <sound>sound\musicTheme1</sound>
+      <sound>sound\musicTheme2</sound>
     </sounds>
   </sounds>
   <sprites name="sprites">
@@ -56,6 +61,7 @@
     <sprite>sprites\sprBossEye</sprite>
     <sprite>sprites\sprBossBody</sprite>
     <sprite>sprites\sprBossLaser</sprite>
+    <sprite>sprites\sprShipParticle</sprite>
   </sprites>
   <backgrounds name="background">
     <background>background\bkTutorial</background>

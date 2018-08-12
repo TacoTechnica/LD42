@@ -80,7 +80,7 @@ if (get_target_planet_atmosphere_density(x, y) &gt; 0.1) {
 _maxVel = 4;
 //_angularDampener = 0.9;
 
-_sideFriction = 0.05 * 5;
+_sideFriction = 0.05 * 1;
 </string>
           </argument>
         </arguments>
@@ -277,7 +277,7 @@ _escaping = false;
             <string>/// Fire bullet
 
 if (!game_is_tutorial() &amp;&amp; _seesPlayer &amp;&amp; _hitTimer &gt;= _hitTimerTime) {
-    enemy_fire_bullet(id, image_angle);
+    enemy_fire_bullet(id, image_angle, true);
 }
 
 alarm[1] = 60 + random(30);
@@ -414,10 +414,10 @@ if (_seesPlayer) {
     var distanceToPlayer = point_distance(x, y, objShip.x, objShip.y);
 
     _input_strafe = 0;
-    if (distanceToPlayer &lt; 64) {
+    if (distanceToPlayer &lt; 100) {
         // Thrust back
         _input_thrust = -1;
-    } else if (distanceToPlayer &gt; 128) {
+    } else if (distanceToPlayer &gt; 200) {
         // Thrust forwards
         _input_thrust = 1;
     } else {

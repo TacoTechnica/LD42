@@ -128,6 +128,17 @@ part_type_size(_bossDeathPartType, 0.2, 2.2, 0.05, 0.01);
 part_type_speed(_bossDeathPartType, 4, 5, -0.01, false);
 part_type_direction(_bossDeathPartType, 0, 360, 0, 0.001);
 //part_type_death(_bossDeathPartType,2,_asteroidBoomPartType2);
+
+// SHIP THRUST PARTICLE
+_shipThrustPartType = part_type_create();
+
+part_type_sprite(_shipThrustPartType, sprShipParticle, false, false, false);
+part_type_alpha3(_shipThrustPartType, 0.4, 0.9, 0.1);
+part_type_colour3(_shipThrustPartType, $a11ff4, $11f4f4, $6b9b9b);
+part_type_life(_shipThrustPartType, 37, 43);
+part_type_speed(_shipThrustPartType,4, 4, 0, 0);
+part_type_blend(_shipThrustPartType, bm_add);
+part_type_size(_shipThrustPartType, 0.2, 1, -0.06, 0.01);
 </string>
           </argument>
         </arguments>
@@ -221,7 +232,7 @@ if (game_is_tutorial()) {
 
         // Avoid spawning on top of the boss
         var bossDistanceSqr = sqr(planet.x - objBoss.x) + sqr(planet.y - objBoss.y);
-        if (bossDistanceSqr &lt; sqr(600)) {
+        if (bossDistanceSqr &lt; sqr(planet._radius + 600)) {
             collided = true;
         }
         if (!collided) {
@@ -362,8 +373,27 @@ _gameDone = false;
             <string>/// Misc audio
 
 if (os_browser != browser_not_a_browser) {
-    audio_channel_num(32);
+    //audio_channel_num(32);
 }
+
+
+if audio_is_playing(musicTheme1) {
+    audio_stop_sound(musicTheme1);
+}
+if audio_is_playing(musicTheme2) {
+    audio_stop_sound(musicTheme2);
+}
+_music1 = audio_play_sound(musicTheme1, 100, true);
+_music2 = audio_play_sound(musicTheme2, 100, true);
+audio_sound_gain(_music2, 0, 0);
+
+_lastGooDanger = false; // Were we inside the goo zone last frame?
+
+/*
+_bulletSound = noone;
+_machineGunSound = noone;
+
+*/
 </string>
           </argument>
         </arguments>
@@ -413,9 +443,51 @@ if _gameDone {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// DEBUG ONLY
+            <string>/// Window Caption
 
-window_set_caption("LD42: Space time! | " + string(fps));
+window_set_caption("LD42: Astropocalypse | " + string(fps));
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Change music when in DANGA ZONE
+
+var transitionTime = 120 * 4;
+
+var isDanger = is_inside_goo_radius(objShip.x, objShip.y);
+// if going INTO danger
+if isDanger &amp;&amp; !_lastGooDanger {
+    // So that we're starting afresh
+    audio_sound_set_track_position(_music2, 0);
+    audio_sound_gain(_music1, 0, transitionTime);
+    audio_sound_gain(_music2, 1, transitionTime);
+}
+// if going OUT OF danger
+if !isDanger &amp;&amp; _lastGooDanger {
+    // So that our audio continues!
+    audio_sound_set_track_position(_music1, audio_sound_get_track_position(_music2));
+    audio_sound_gain(_music1, 1, transitionTime);
+    audio_sound_gain(_music2, 0, transitionTime);
+}
+
+
+_lastGooDanger = isDanger;
 </string>
           </argument>
         </arguments>
@@ -680,6 +752,34 @@ if (get_target_planet_death_timer() != -1) {
         draw_text(view_wport/2 - 100, view_hport - 64 - 16, "PLANET DEATH IN " + string(time) + "s");
     }
 }
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="9" enumb="112">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Screenshot!
+
+
+var name = "LD42Screenshot " + string(_time) + ".png";
+screen_save(name);
+show_message('Screenshot "' + name + '" Saved!');
 </string>
           </argument>
         </arguments>

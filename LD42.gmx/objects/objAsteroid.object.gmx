@@ -327,7 +327,7 @@ if (_dead) {
     part_emitter_destroy(Gamestate._mainPartSystem, boomEmitter);
 
     // Health drop
-    if (!place_meeting(x, y, objShip) &amp;&amp; objShip._health &lt; objShip._healthMax &amp;&amp; (game_is_tutorial() || random(2) &lt; 1)) {
+    if (!place_meeting(x, y, objShip) &amp;&amp; objShip._health &lt; objShip._healthMax &amp;&amp; (game_is_tutorial() || random(1.4) &lt; 1)) {
         instance_create(x, y, objHealthPack);
     }
     

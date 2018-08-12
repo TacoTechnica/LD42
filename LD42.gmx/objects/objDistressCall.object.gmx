@@ -120,7 +120,7 @@ if (!_read) {
 }
 
 if (_reading) {
-    draw_background_ext(bkMessage, view_wview / 2 - 64, view_hview / 2 - 64, 3, 3, 0, c_white, 1);
+    draw_background_ext(bkMessage, view_wview / 2 - 128, view_hview / 2 - 64, 3, 3, 0, c_white, 1);
     draw_set_color(c_white);
     draw_set_font(font_bigish);
     draw_text(24, view_hview / 2 + 64*4 + 6, "Press K to close");

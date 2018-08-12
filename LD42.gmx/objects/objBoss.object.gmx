@@ -59,13 +59,15 @@ enum BOSS_ATTACK {
     WAIT,
     CIRCLE_LAUNCH,
     LASER,
-    ASTEROIDS
+    ASTEROIDS,
+    CHUCKEM
 }
 
 _attackTimes[BOSS_ATTACK.WAIT] = 60;
 _attackTimes[BOSS_ATTACK.CIRCLE_LAUNCH] = 60 * 5;
 _attackTimes[BOSS_ATTACK.LASER] = 60 * 2;
 _attackTimes[BOSS_ATTACK.ASTEROIDS] = 60 * 2;
+_attackTimes[BOSS_ATTACK.CHUCKEM] = 60 * 2;
 
 _attack = BOSS_ATTACK.WAIT;
 _attackProgress = 0;
@@ -120,7 +122,7 @@ _velY = 0;
           <argument>
             <kind>1</kind>
             <string>/// Health
-_healthMax = 400;
+_healthMax = 400 * 1.5;
 _health = _healthMax;
 
 _dead = false;
@@ -203,7 +205,8 @@ show_debug_message("Game Done!");
 
 instance_deactivate_all(false);
 
-audio_play_sound(musicBattyMcFaddin,1,false);
+audio_stop_all();
+audio_play_sound(musicBattyMcFaddin,100,false);
 room_goto(roomThankyou);
 
 </string>
@@ -259,17 +262,17 @@ show_debug_message("Boss Dead!");
             <string>/// FINISH ATTACK or Next attack
 if (_playerSpotted) {
     if (_attack == BOSS_ATTACK.LASER) {
-        laserSpeed = 50;
+        laserSpeed = 250;
         var laser = instance_create(x, y, objBossLaser);
         laser._velX = lengthdir_x(laserSpeed, _laserAngle);
         laser._velY = lengthdir_y(laserSpeed, _laserAngle);
         laser.image_angle = _laserAngle;
         
-        audio_play_sound(soundAsteroidDeath,2, false);
+        audio_play_sound(soundLaser,1, false);
     }
     
     if (_attack == BOSS_ATTACK.WAIT) {
-        _attack = 1 + floor(random(3)); // Assuming wait is 0...
+        _attack = 1 + floor(random(4)); // Assuming wait is 0...
     } else {
         _attack = BOSS_ATTACK.WAIT;
     }
@@ -373,14 +376,16 @@ if (_dead) {
             <kind>1</kind>
             <string>/// Special camera scale!
 
+var regularScale = 1.5;
+
 var distSqr = sqr(x - objShip.x) + sqr(y - objShip.y);
 if (distSqr &lt; 1000*1000) {
 
-    var scale = 1 + 1.5 * (1000*1000 - distSqr) / (1000*1000);
+    var scale = regularScale + 1 * (1000*1000 - distSqr) / (1000*1000);
     scale = clamp(scale, 1, 2.5);
     camera_set_scale(scale);
 } else {
-    camera_set_scale(1);
+    camera_set_scale(regularScale);
 }
 
 _playerSpotted = distSqr &lt; 800*800;
@@ -419,21 +424,39 @@ switch (_attack) {
         break;
     case BOSS_ATTACK.CIRCLE_LAUNCH:
         var angle = 3 * 360 * progress;
-        enemy_fire_bullet(id, angle);
+        if (_attackProgress % 2 == 0) {
+            enemy_fire_bullet(id, angle, false);
+            enemy_fire_bullet(id, angle + 180, false);
+        }
         break;
     case BOSS_ATTACK.LASER:
         if _attackProgress % 3 == 0 {
-            var s = audio_play_sound(soundBeeper, 4, false);
+            var s = audio_play_sound(soundBeeper, 2, false);
             audio_sound_gain(s, 0.2, 0);
         }
-        if (progress &lt; 0.95) {
+        if (progress &lt; 0.98) {
             _laserAngle = point_direction(x, y, objShip.x, objShip.y);
         }
         break;
     case BOSS_ATTACK.ASTEROIDS:
         // SEE objAsteroidThrower Step 1
         break;
-        
+    case BOSS_ATTACK.CHUCKEM:
+        if _attackProgress % 40 == 0 {
+            var count = 30;
+            for(var i = 0; i &lt; count; i++) {
+                var angle = 360 * i / count;
+                var moveSpeed = random(2) + 4;
+
+                var asteroid = instance_create(x, y, objAsteroid);
+                if instance_exists(asteroid) {
+                    asteroid._velX = lengthdir_x(moveSpeed, angle);
+                    asteroid._velY = lengthdir_y(moveSpeed, angle);
+                    asteroid._velRotation = 0.4 * (random(moveSpeed * 2) - moveSpeed);
+                }
+            }
+        }
+        break;
 }
 
 _attackProgress++;
@@ -563,14 +586,14 @@ if (!_dead) {
 if (_attack == BOSS_ATTACK.LASER) {
     var progress = _attackProgress / _attackTimes[_attack];
 
-    if (progress &lt; 0.8) {
+    if (progress &lt; 0.9) {
         draw_set_color(c_red);
-        draw_set_alpha(random(0.9) + 0.1);
+        draw_set_alpha(random(0.4) + 0.1);
     } else {
         draw_set_color(c_lime);
-        draw_set_alpha(1);
+        draw_set_alpha(0.5);
     }
-    draw_line_width(x, y, x + lengthdir_x(1000, _laserAngle), y + lengthdir_y(1000, _laserAngle), 5);
+    draw_line_width(x, y, x + lengthdir_x(1000, _laserAngle), y + lengthdir_y(1000, _laserAngle), 12);
 }
 </string>
           </argument>

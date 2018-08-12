@@ -114,7 +114,7 @@ _gooRadius = 16 * 300 * 3 * 5 * power(_counter / (10 * 60 * 60), 0.8);
 
 var chance;
 if is_inside_goo_radius(objShip.x, objShip.y) {
-    if instance_number(objShip) &lt; 7 {
+    if instance_number(objEnemy) &lt; 7 {
         chance = 1 / 70;
     } else {
         chance = 0;

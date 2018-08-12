@@ -3,7 +3,7 @@
 // Moves the camera to those coordinates, using our special camera effect!
 
 /// Constants
-var factor = 0.2;
+var factor = 0.1;
 
 var target_x = argument0,
     target_y = argument1,
@@ -17,7 +17,9 @@ target_y -= view_hview / 2;
 view_xview += (target_x - view_xview) * factor;
 view_yview += (target_y - view_yview) * factor;
 
-view_angle = target_angle;
+var angleDifference = angle_difference(target_angle, view_angle);
+
+view_angle += angleDifference * 0.1;
 
 // SHAKE
 var s = Gamestate._cameraShake;

@@ -97,7 +97,7 @@ if place_meeting(x, y, objShip) {
         
         instance_create(x, y, objPlusOneEffect);
 
-        audio_play_sound(soundHealth, 1, false);
+        audio_play_sound(soundHealth, 2, false);
 
         instance_destroy();
     }

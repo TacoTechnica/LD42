@@ -20,7 +20,12 @@ bullet._velX = ship._velX + lengthdir_x(bulletSpeed, angle);
 bullet._velY = ship._velY + lengthdir_y(bulletSpeed, angle);
 bullet.image_angle = angle;
 
-
+// Audio
+/*if (Gamestate._machineGunSound != noone) {
+    audio_stop_sound(Gamestate._machineGunSound);
+}
+Gamestate._machineGunSound = */
 audio_play_sound(soundMaschineGun,1,false);
+
 
 return bullet;

@@ -95,10 +95,10 @@ if place_meeting(x, y, objShip) {
     if (objShip._hyperDriveCells &lt; objShip._hyperDriveCellsMax) {
         objShip._hyperDriveCells++;
 
-        audio_play_sound(soundBeeper, 1, false);
+        audio_play_sound(soundBeeper, 2, false);
         
         if (objShip._hyperDriveCells = objShip._hyperDriveCellsMax) {
-            audio_play_sound(soundHyperdriveReady, 1, false);
+            audio_play_sound(soundHyperdriveReady, 4, false);
             display_text("Hyperdrive Ready!", c_aqua, 120);
         }
         instance_destroy();
